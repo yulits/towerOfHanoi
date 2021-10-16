@@ -1,5 +1,8 @@
 package com.yulits;
 
+import org.w3c.dom.ls.LSOutput;
+
+import java.util.Arrays;
 import java.util.Stack;
 
 public class TowerOfHanoi {
@@ -7,7 +10,17 @@ public class TowerOfHanoi {
     Stack<Integer> pegA = new Stack<Integer>();
     Stack<Integer> pegB = new Stack<Integer>();
     Stack<Integer> pegC = new Stack<Integer>();
+//    int disk;
+//    Stack<Integer> sparePeg = new Stack<Integer>();
 
+    private Stack<Integer> sparePeg(Stack<Integer> fromPeg, Stack<Integer> toPeg) {
+        for (Stack peg : Arrays.asList(this.pegA, this.pegB, this.pegC)) {
+            if ((peg != fromPeg) && (peg != toPeg)) {
+                return peg;
+            }
+        }
+        return new Stack();
+    }
 
     public void printTowerOfHanoi() {
 
@@ -18,23 +31,16 @@ public class TowerOfHanoi {
 
     }
 
-    public void moveDisk(Stack<Integer> fromPeg, Stack<Integer> toPeg) {
-        int disk = fromPeg.pop();
-        toPeg.push(disk);
-        printTowerOfHanoi();
-    }
+    private void moveDisks(int numDisks, Stack<Integer> fromPeg, Stack<Integer> toPeg) {
 
-    public void moveDisks(int numDisks, Stack<Integer> fromPeg, Stack<Integer> toPeg, Stack<Integer> sparePeg) {
-
-        if (numDisks == 2) {
-            moveDisk(fromPeg, sparePeg);
-            moveDisk(fromPeg, toPeg);
-            moveDisk(sparePeg, toPeg);
+        if (numDisks == 1) {
+            toPeg.push(fromPeg.pop());
         }
         else {
-            moveDisks(numDisks-1, fromPeg, sparePeg, toPeg);
-            moveDisk(fromPeg, toPeg);
-            moveDisks(numDisks-1, sparePeg, toPeg, fromPeg);
+            Stack<Integer> sparePeg = new Stack<Integer>();
+            moveDisks(numDisks-1, fromPeg, sparePeg);
+            toPeg.push(fromPeg.pop());
+            moveDisks(numDisks-1, sparePeg, toPeg);
         }
     }
 
@@ -44,9 +50,7 @@ public class TowerOfHanoi {
         {
             this.pegA.push(i);
         }
-
-        moveDisks(numDisks, this.pegA, this.pegB, this.pegC);
-
+        moveDisks(numDisks, this.pegA, this.pegB);
     }
 }
 
